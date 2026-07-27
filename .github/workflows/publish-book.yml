@@ -1,0 +1,100 @@
+name: Build and publish book
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: book-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    name: Build PDF
+    runs-on: macos-15
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Typst
+        uses: typst-community/setup-typst@63ac138db421d586de61f7f5ac3bcef6a2e6c78c # v5.1.0
+        with:
+          typst-version: "0.15.1"
+
+      - name: Verify required fonts
+        shell: bash
+        run: |
+          typst --version | grep -Eq '^typst 0\.15\.1([[:space:]]|$)'
+          typst fonts > "${RUNNER_TEMP}/typst-fonts.txt"
+          grep -Fxq "Hiragino Mincho ProN" "${RUNNER_TEMP}/typst-fonts.txt"
+          grep -Fxq "Hiragino Sans" "${RUNNER_TEMP}/typst-fonts.txt"
+          grep -Fxq "Menlo" "${RUNNER_TEMP}/typst-fonts.txt"
+
+      - name: Build the book
+        shell: bash
+        run: |
+          mkdir -p output/pdf
+          typst compile main.typ output/pdf/local_ai_companion_book.pdf
+          test -s output/pdf/local_ai_companion_book.pdf
+          test "$(head -c 5 output/pdf/local_ai_companion_book.pdf)" = "%PDF-"
+
+      - name: Upload the PDF
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: kokage-book-pdf
+          path: output/pdf/local_ai_companion_book.pdf
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+
+  release:
+    name: Publish GitHub Release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download the PDF
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: kokage-book-pdf
+          path: output/pdf
+
+      - name: Publish the release
+        shell: bash
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
+            gh release create "${GITHUB_REF_NAME}" \
+              output/pdf/local_ai_companion_book.pdf \
+              --verify-tag \
+              --generate-notes \
+              --prerelease \
+              --latest=false
+          else
+            gh release create "${GITHUB_REF_NAME}" \
+              output/pdf/local_ai_companion_book.pdf \
+              --verify-tag \
+              --generate-notes \
+              --latest
+          fi

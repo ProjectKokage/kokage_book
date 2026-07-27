@@ -1,0 +1,86 @@
+#import "styles.typ": *
+
+#let book-title = "完全ローカルな話し相手の作り方"
+#let book-title-display = [完全ローカルな#linebreak()話し相手の作り方]
+#let book-subtitle = "言語モデル、音声、三次元キャラクターを一台の端末で動かし、会話を成り立たせる設計"
+#let book-author = "Kokage プロジェクト"
+#let book-edition = "短縮改訂版　2026年7月27日"
+
+#show: book.with(title: book-title)
+
+#cover(
+  title: book-title-display,
+  subtitle: book-subtitle,
+  author: book-author,
+  edition: book-edition,
+)
+
+#title-page(
+  title: book-title-display,
+  subtitle: book-subtitle,
+  author: book-author,
+  date: book-edition,
+)
+
+#include "chapters/00-prologue.typ"
+
+#pagebreak(weak: true)
+#block(
+  below: 14pt,
+  breakable: false,
+)[
+  #text(font: sans-font, size: 21pt, weight: 700, fill: ink)[目次]
+  #v(8pt)
+  #line(length: 28mm, stroke: 1.6pt + accent)
+]
+
+#block[
+  #set text(size: 8.7pt)
+  #set par(leading: 0.66em, spacing: 0.58em)
+  #outline(
+    title: none,
+    depth: 2,
+    indent: auto,
+  )
+]
+
+#part-page(
+  number: "一",
+  title: [完全ローカルの約束],
+)[
+  「完全ローカル」と呼べる範囲を決め、待ち時間とメモリの上限を置く。
+]
+
+#include "chapters/01-local-promise.typ"
+#include "chapters/02-experience-budget.typ"
+
+#part-page(
+  number: "二",
+  title: [モデルを一台に収める],
+)[
+  モデル名だけで決めず、端末と推論環境まで含めて選ぶ。
+]
+
+#include "chapters/03-model-selection.typ"
+#include "chapters/04-inference-optimization.typ"
+
+#part-page(
+  number: "三",
+  title: [一人の相手として動かす],
+)[
+  文字、声、身体は別々の速さで動く。
+  三つを、一つの返答として破綻なく組み合わせる。
+]
+
+#include "chapters/05-turn-orchestration.typ"
+#include "chapters/06-voice-loop.typ"
+#include "chapters/07-vrm-performance.typ"
+#include "chapters/08-blueprint.typ"
+#include "chapters/09-epilogue.typ"
+
+#counter(heading).update(0)
+#set heading(numbering: "A.1")
+
+#include "appendices/checklist.typ"
+#include "appendices/glossary.typ"
+#include "appendices/sources.typ"
