@@ -11,7 +11,7 @@ Kokage の設計資料を下敷きに、モデル選定、端末内推論の高�
 Typst 0.15 以降を想定しています。
 
 ```sh
-typst compile main.typ output/pdf/local_ai_companion_book.pdf
+typst compile main.typ output/pdf/kokage_book.pdf
 ```
 
 日本語本文にはヒラギノ明朝、見出しにはヒラギノ角ゴシックを使います。
@@ -25,20 +25,20 @@ typst compile main.typ output/pdf/local_ai_companion_book.pdf
 ハイフンを含まないタグは Latest に設定し、`v1.0.0-rc.1` のようにハイフンを含むタグは pre-release として公開して Latest の対象外にします。
 
 ```sh
-git tag -a v1.0.0 -m "v1.0.0"
-git push origin v1.0.0
+git tag -a v1.0.1 -m "v1.0.1"
+git push origin v1.0.1
 ```
 
 最新版の PDF には、次の安定した URL でアクセスできます。
 
 ```text
-https://github.com/ProjectKokage/kokage_book/releases/latest/download/local_ai_companion_book.pdf
+https://github.com/ProjectKokage/kokage_book/releases/latest/download/kokage_book.pdf
 ```
 
 各版には、タグを含む固定 URL でもアクセスできます。
 
 ```text
-https://github.com/ProjectKokage/kokage_book/releases/download/v1.0.0/local_ai_companion_book.pdf
+https://github.com/ProjectKokage/kokage_book/releases/download/v1.0.1/kokage_book.pdf
 ```
 
 組版環境を現在の誌面と揃えるため、Action は Typst 0.15.1 と `macos-15` を使い、必要なヒラギノ書体と Menlo が存在しない場合は公開前に失敗します。
