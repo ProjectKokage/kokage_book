@@ -32,13 +32,13 @@ git push origin v1.0.0
 最新版の PDF には、次の安定した URL でアクセスできます。
 
 ```text
-https://github.com/dummyx/kokage_book/releases/latest/download/local_ai_companion_book.pdf
+https://github.com/ProjectKokage/kokage_book/releases/latest/download/local_ai_companion_book.pdf
 ```
 
 各版には、タグを含む固定 URL でもアクセスできます。
 
 ```text
-https://github.com/dummyx/kokage_book/releases/download/v1.0.0/local_ai_companion_book.pdf
+https://github.com/ProjectKokage/kokage_book/releases/download/v1.0.0/local_ai_companion_book.pdf
 ```
 
 組版環境を現在の誌面と揃えるため、Action は Typst 0.15.1 と `macos-15` を使い、必要なヒラギノ書体と Menlo が存在しない場合は公開前に失敗します。
