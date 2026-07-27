@@ -43,6 +43,13 @@ https://github.com/dummyx/kokage_book/releases/download/v1.0.0/local_ai_companio
 
 組版環境を現在の誌面と揃えるため、Action は Typst 0.15.1 と `macos-15` を使い、必要なヒラギノ書体と Menlo が存在しない場合は公開前に失敗します。
 
+## ライセンス
+
+© 2026 Kokage プロジェクト
+
+本リポジトリの内容は、[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/) のもとで公開します。
+完全な条文は [`LICENSE.txt`](LICENSE.txt) を参照してください。
+
 ## 構成
 
 - `main.typ`：書籍全体の構成と書誌情報
