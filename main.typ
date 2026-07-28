@@ -10,6 +10,7 @@
 
 #cover(
   title: book-title-display,
+  title-note: [スマホでも動く※],
   subtitle: book-subtitle,
   author: book-author,
   edition: book-edition,
@@ -25,6 +26,7 @@
 #include "chapters/00-prologue.typ"
 
 #pagebreak(weak: true)
+#metadata("chapter-header-reset")
 #block(
   below: 14pt,
   breakable: false,

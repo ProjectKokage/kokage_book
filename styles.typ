@@ -30,8 +30,21 @@
     header: context {
       let page-number = counter(page).get().first()
       if page-number > 3 {
-        set text(font: sans-font, size: 6.8pt, fill: muted)
-        align(left)[#smallcaps(title)]
+        let chapter-events = query(
+          heading.where(level: 1).or(
+            metadata.where(value: "chapter-header-reset"),
+          ),
+        )
+        let current-chapter-events = chapter-events.filter(event =>
+          counter(page).at(event.location()).first() <= page-number
+        )
+        if current-chapter-events.len() > 0 {
+          let current-chapter = current-chapter-events.last()
+          if current-chapter.func() == heading {
+            set text(font: sans-font, size: 6.8pt, fill: muted)
+            align(left)[#current-chapter.body]
+          }
+        }
       }
     },
     footer: context {
@@ -134,13 +147,44 @@
   body
 }
 
-#let cover(title: "", subtitle: "", author: "", edition: "") = {
+#let cover(
+  title: "",
+  title-note: none,
+  subtitle: "",
+  author: "",
+  edition: "",
+) = {
   pagebreak(weak: true)
   align(center + horizon)[
     #block(width: 100%)[
       #line(length: 18mm, stroke: 2.4pt + accent)
       #v(14pt)
-      #text(font: sans-font, size: 27pt, weight: 800, fill: ink)[#title]
+      #block(width: 100%)[
+        #text(font: sans-font, size: 27pt, weight: 800, fill: ink)[#title]
+        #if title-note != none {
+          place(
+            top + left,
+            dx: 0mm,
+            dy: -5mm,
+            rotate(
+              -12deg,
+              block(
+                inset: (x: 6pt, y: 3.5pt),
+                fill: pale-warm,
+                stroke: 0.8pt + warm,
+                radius: 2pt,
+              )[
+                #text(
+                  font: sans-font,
+                  size: 7.8pt,
+                  weight: 700,
+                  fill: warm,
+                )[#title-note]
+              ],
+            ),
+          )
+        }
+      ]
       #v(13pt)
       #text(font: sans-font, size: 11pt, fill: accent-dark)[#subtitle]
       #v(30pt)
@@ -175,6 +219,7 @@
 
 #let part-page(number: "", title: "", body) = {
   pagebreak(weak: true)
+  metadata("chapter-header-reset")
   align(center + horizon)[
     #block(width: 86%)[
       #text(font: sans-font, size: 8pt, fill: accent, tracking: 0.12em)[第 #number 部]
