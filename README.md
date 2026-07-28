@@ -21,6 +21,13 @@ typst compile main.typ output/pdf/kokage_book.pdf
 
 `.github/workflows/publish-book.yml` は、プルリクエスト、`main` ブランチへの push、手動実行で PDF を組版し、14 日間保存する Actions artifact として登録します。
 
+`main` への push が成功すると、`continuous` pre-release の PDF も同じファイル名で置き換えます。
+これは各コミット時点の確認用であり、次の固定 URL から取得できます。
+
+```text
+https://github.com/ProjectKokage/kokage_book/releases/download/continuous/kokage_book.pdf
+```
+
 `v` で始まるタグを push すると、同じ PDF をそのタグの GitHub Release に添付します。
 ハイフンを含まないタグは Latest に設定し、`v1.0.0-rc.1` のようにハイフンを含むタグは pre-release として公開して Latest の対象外にします。
 
@@ -29,7 +36,7 @@ git tag -a v1.0.1 -m "v1.0.1"
 git push origin v1.0.1
 ```
 
-最新版の PDF には、次の安定した URL でアクセスできます。
+正式版の最新版 PDF には、次の安定した URL でアクセスできます。
 
 ```text
 https://github.com/ProjectKokage/kokage_book/releases/latest/download/kokage_book.pdf
