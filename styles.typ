@@ -40,7 +40,8 @@
         )
         if current-chapter-events.len() > 0 {
           let current-chapter = current-chapter-events.last()
-          if current-chapter.func() == heading {
+          let chapter-start-page = counter(page).at(current-chapter.location()).first()
+          if current-chapter.func() == heading and chapter-start-page < page-number {
             set text(font: sans-font, size: 6.8pt, fill: muted)
             align(left)[#current-chapter.body]
           }
@@ -153,6 +154,7 @@
   subtitle: "",
   author: "",
   edition: "",
+  note: none,
 ) = {
   pagebreak(weak: true)
   align(center + horizon)[
@@ -199,6 +201,10 @@
       #text(font: sans-font, size: 9pt, fill: muted)[#author]
       #v(5pt)
       #text(font: sans-font, size: 7.5pt, fill: muted)[#edition]
+      #if note != none {
+        v(8pt)
+        text(font: sans-font, size: 6.3pt, fill: muted)[#note]
+      }
     ]
   ]
   pagebreak()

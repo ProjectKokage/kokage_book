@@ -2,9 +2,10 @@
 
 Typst で組版した日本語技術書の原稿です。
 
-Kokage の設計資料を下敷きに、モデル選定、端末内推論の高速化、三次元キャラクターの制御を中心とした設計知識を、実装コードへ踏み込まず短くまとめています。
+Kokage の設計資料を下敷きに、モデル選定、端末内推論の高速化、音声、三次元キャラクターの制御を、実装コードへ踏み込みすぎない粒度で整理しています。
 
-既存の `draft.md` は初期メモとして残し、その論点を本編へ取り込みました。
+`draft.md` は初期メモとして残しています。
+主要な論点は本編へ取り込み済みです。
 
 ## 組版
 
@@ -15,7 +16,7 @@ typst compile main.typ output/pdf/kokage_book.pdf
 ```
 
 日本語本文にはヒラギノ明朝、見出しにはヒラギノ角ゴシックを使います。
-別環境では `styles.typ` の `body-font` と `sans-font` を、導入済みの日本語フォントへ変更してください。
+別環境では `styles.typ` の `body-font` と `sans-font` を、導入済みの日本語フォント名へ変更してください。
 
 ## GitHub Releases への公開
 
@@ -36,19 +37,20 @@ git tag -a v1.0.1 -m "v1.0.1"
 git push origin v1.0.1
 ```
 
-正式版の最新版 PDF には、次の安定した URL でアクセスできます。
+最新の正式版 PDF は、次の URL で取得できます。
 
 ```text
 https://github.com/ProjectKokage/kokage_book/releases/latest/download/kokage_book.pdf
 ```
 
-各版には、タグを含む固定 URL でもアクセスできます。
+特定の版は、タグを含む固定 URL で取得できます。
 
 ```text
 https://github.com/ProjectKokage/kokage_book/releases/download/v1.0.1/kokage_book.pdf
 ```
 
-組版環境を現在の誌面と揃えるため、Action は Typst 0.15.1 と `macos-15` を使い、必要なヒラギノ書体と Menlo が存在しない場合は公開前に失敗します。
+誌面を手元の組版結果と揃えるため、ワークフローは Typst 0.15.1 と `macos-15` を使います。
+必要なヒラギノ書体と Menlo が存在しない場合、公開前に失敗します。
 
 ## ライセンス
 
@@ -61,7 +63,7 @@ https://github.com/ProjectKokage/kokage_book/releases/download/v1.0.1/kokage_boo
 
 - `main.typ`：書籍全体の構成と書誌情報
 - `styles.typ`：A5 判の組版、見出し、コラム、図版の定義
-- `chapters/`：序章、全8章、終章の本文
+- `chapters/`：序章、全 8 章、終章の本文
 - `appendices/`：設計チェックリスト、用語集、参考資料
 - `output/pdf/`：組版済みの文書
 

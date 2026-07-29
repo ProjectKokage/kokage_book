@@ -14,6 +14,7 @@
   subtitle: book-subtitle,
   author: book-author,
   edition: book-edition,
+  note: [※ ただし、端末と実行構成による。確かめ方は本文で説明する。],
 )
 
 #title-page(
@@ -50,7 +51,8 @@
   number: "一",
   title: [完全ローカルの約束],
 )[
-  「完全ローカル」と呼べる範囲を決め、待ち時間とメモリの上限を置く。
+  「完全ローカル」と呼べる範囲を決める。
+  待ち時間とメモリの上限も、同じ約束に含める。
 ]
 
 #include "chapters/01-local-promise.typ"
@@ -60,7 +62,8 @@
   number: "二",
   title: [モデルを一台に収める],
 )[
-  モデル名だけで決めず、端末と推論環境まで含めて選ぶ。
+  モデル名だけでは選べない。
+  端末、実行環境、補助ファイルを一組で確かめる。
 ]
 
 #include "chapters/03-model-selection.typ"
@@ -71,7 +74,7 @@
   title: [一人の相手として動かす],
 )[
   文字、声、身体は別々の速さで動く。
-  三つを、一つの返答として破綻なく組み合わせる。
+  利用者に届く返答では、三つを一つにそろえる。
 ]
 
 #include "chapters/05-turn-orchestration.typ"
