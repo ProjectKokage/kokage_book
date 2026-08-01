@@ -2,7 +2,7 @@
 
 Typst で組版した日本語技術書の原稿です。
 
-Kokage の設計資料を下敷きに、モデル選定、端末内推論の高速化、音声、三次元キャラクターの制御を、実装コードへ踏み込みすぎない粒度で整理しています。
+こかげの設計資料を下敷きに、モデル選定、端末内推論の高速化、音声、三次元キャラクターの制御を、実装コードへ踏み込みすぎない粒度で整理しています。
 
 `draft.md` は初期メモとして残しています。
 主要な論点は本編へ取り込み済みです。
@@ -54,7 +54,7 @@ https://github.com/ProjectKokage/kokage_book/releases/download/v1.0.1/kokage_boo
 
 ## ライセンス
 
-© 2026 Kokage プロジェクト
+© 2026 プロジェクトこかげ
 
 本リポジトリの内容は、[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/) のもとで公開します。
 完全な条文は [`LICENSE.txt`](LICENSE.txt) を参照してください。

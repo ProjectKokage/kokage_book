@@ -3,49 +3,30 @@
 #let book-title = "完全ローカルな話し相手の作り方"
 #let book-title-display = [完全ローカルな#linebreak()話し相手の作り方]
 #let book-subtitle = "言語モデル、音声、三次元キャラクターを一台の端末で動かし、会話を成り立たせる設計"
-#let book-author = "Kokage プロジェクト"
+#let book-subtitle-display = [言語モデル、音声、三次元キャラクターを一台の端末で動かし、#linebreak()会話を成り立たせる設計]
+#let book-author = "プロジェクトこかげ"
 #let book-edition = "短縮改訂版　2026年7月27日"
 
 #show: book.with(title: book-title)
 
 #cover(
   title: book-title-display,
-  title-note: [スマホでも動く※],
-  subtitle: book-subtitle,
+  title-note: [スマホでも動く],
+  subtitle: book-subtitle-display,
   author: book-author,
   edition: book-edition,
-  note: [※ ただし、端末と実行構成による。確かめ方は本文で説明する。],
 )
 
 #title-page(
   title: book-title-display,
-  subtitle: book-subtitle,
+  subtitle: book-subtitle-display,
   author: book-author,
   date: book-edition,
 )
 
 #include "chapters/00-prologue.typ"
 
-#pagebreak(weak: true)
-#metadata("chapter-header-reset")
-#block(
-  below: 14pt,
-  breakable: false,
-)[
-  #text(font: sans-font, size: 21pt, weight: 700, fill: ink)[目次]
-  #v(8pt)
-  #line(length: 28mm, stroke: 1.6pt + accent)
-]
-
-#block[
-  #set text(size: 8.7pt)
-  #set par(leading: 0.66em, spacing: 0.58em)
-  #outline(
-    title: none,
-    depth: 2,
-    indent: auto,
-  )
-]
+#toc()
 
 #part-page(
   number: "一",
@@ -89,3 +70,11 @@
 #include "appendices/checklist.typ"
 #include "appendices/glossary.typ"
 #include "appendices/sources.typ"
+
+#colophon(
+  title: book-title,
+  subtitle: book-subtitle,
+  author: book-author,
+  edition: book-edition,
+  url: "https://github.com/ProjectKokage/kokage_book",
+)
