@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="370"
+  height="263"
+  viewBox="485 251 370 263"
+  role="img"
+  aria-labelledby="title description"
+>
+  <title id="title">Kokage two-leaf mark</title>
+  <desc id="description">
+    The two mint leaves from the Kokage app icon on a transparent background.
+  </desc>
+
+  <defs>
+    <linearGradient
+      id="mint"
+      x1="430"
+      y1="945"
+      x2="835"
+      y2="272"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0" stop-color="#a8d2c2"/>
+      <stop offset=".5" stop-color="#aad3c3"/>
+      <stop offset="1" stop-color="#aad3c4"/>
+    </linearGradient>
+  </defs>
+
+  <g id="leaves" fill="url(#mint)">
+    <path id="large-leaf" d="
+      M 835 271
+      C 831.2 375.9 783.1 436.4 698 460
+      C 674 466 651 476 636 494
+      C 626.5 347.5 698.4 274.7 835 271
+      Z
+    "/>
+
+    <path id="small-leaf" d="
+      M 505 339
+      C 583.3 343.7 633.4 381.9 629 466
+      C 604.2 458.5 582.1 448.2 561 437
+      C 531.4 415.3 507.1 388.3 505 339
+      Z
+    "/>
+  </g>
+
+  <path id="leaf-highlight" fill="#fdf2e1" d="
+    M 782 329
+    C 739.5 362.2 698.5 396.9 664 438
+    C 684.2 390.5 729.3 350.7 782 329
+    Z
+  "/>
+</svg>
