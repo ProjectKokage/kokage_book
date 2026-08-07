@@ -1,12 +1,15 @@
-#let ink = rgb("#1f2933")
-#let muted = rgb("#66737d")
-#let accent = rgb("#1f746d")
-#let accent-dark = rgb("#15544f")
-#let warm = rgb("#c96d3b")
+// 配色はアプリのロゴから取る(深緑 #2d4d42・ミント #a8d2c2・クリーム #fdf2e1)。
+#let ink = rgb("#222b26")
+#let muted = rgb("#67746d")
+#let accent = rgb("#2d4d42")
+#let accent-dark = rgb("#1d382f")
+#let mint = rgb("#a8d2c2")
+#let cream = rgb("#fdf2e1")
+#let warm = rgb("#a05e3b")
 #let paper = rgb("#fcfbf7")
-#let pale = rgb("#edf6f3")
-#let pale-warm = rgb("#fbf0e9")
-#let rule = rgb("#ccd8d4")
+#let pale = rgb("#eef4f0")
+#let pale-warm = rgb("#f9efe0")
+#let rule = rgb("#ccd7d0")
 
 #let body-font = "Hiragino Mincho ProN"
 
@@ -14,21 +17,15 @@
 
 #let mono-font = "Menlo"
 
-// 木陰の葉。表紙のキャラクターと同じ葉を、扉・中扉・奥付の目印に使う。
-#let leaf-mark = box(width: 9mm, height: 13.5mm, {
-  place(top + left, curve(
-    stroke: (paint: accent, thickness: 1pt, cap: "round"),
-    curve.move((8.2mm, 12.9mm)),
-    curve.quad((6mm, 9.8mm), (4.2mm, 7.2mm)),
-  ))
-  place(top + left, curve(
-    fill: accent,
-    curve.move((4.7mm, 7.6mm)),
-    curve.cubic((5.8mm, 3.8mm), (3.6mm, 1.2mm), (0.4mm, 0.6mm)),
-    curve.cubic((0.2mm, 3.6mm), (1.8mm, 6.6mm), (4.7mm, 7.6mm)),
-    curve.close(),
-  ))
-})
+// アプリのロゴ。assets/ の3種は、こかげ本体が配布しているアイコンと同じ作画。
+// 透過マーク(枠なし)は表紙の地と扉、マスカブル(暗地に原寸マーク)は奥付に使う。
+// 標準アイコン(暗地に拡大マーク)はいま未使用だが、関数は残す。
+#let logo-icon(size) = box(radius: size * 0.22, clip: true, image("assets/logo-icon.svg", width: size))
+#let logo-mark(size) = image("assets/logo-mark.svg", height: size)
+#let logo-maskable(size) = box(radius: size * 0.22, clip: true, image("assets/logo-maskable.svg", width: size))
+
+// 表の最下段の罫。行数を様式側で知る場所が無いため、各表が末尾に置く。
+#let table-bottomrule = table.hline(stroke: 0.7pt + rule.darken(45%))
 
 // 見出しの番号ラベル(第1章 / 付録A / 序章・終章)を柱と目次で共用する。
 #let heading-label(ev, styled: true) = {
@@ -115,26 +112,47 @@
     first-line-indent: (amount: 1em, all: true),
   )
   set heading(numbering: "1.1")
+  // 項目間の空きは本文の行送り(0.78em)と同じにする。これより狭いと、
+  // 折り返しを含む項目では、項目の内側より境目のほうが詰まって見える。
   set list(
     indent: 1.1em,
     body-indent: 0.55em,
-    spacing: 0.5em,
+    spacing: 0.78em,
     marker: (text(fill: accent)[•], text(fill: muted, size: 0.85em)[◦]),
   )
-  set enum(indent: 1.1em, body-indent: 0.55em, spacing: 0.5em)
+  set enum(indent: 1.1em, body-indent: 0.55em, spacing: 0.78em)
+  // 表は縦罫を引かない三線表。見出し行の罫は行本体に持たせ、
+  // ページ跨ぎで table.header が繰り返されても罫が付いて回るようにする。
   set table(
-    stroke: 0.45pt + rule,
-    inset: (x: 5pt, y: 4pt),
+    stroke: (x, y) => (
+      left: none,
+      right: none,
+      top: if y == 0 { 0.7pt + rule.darken(45%) }
+        else if y == 1 { none }
+        else { 0.3pt + rule.lighten(20%) },
+      bottom: if y == 0 { 0.45pt + rule.darken(45%) } else { none },
+    ),
+    inset: (x: 6pt, y: 4.5pt),
   )
+  show table.cell.where(y: 0): set text(font: sans-font, size: 7.9pt, weight: 600, fill: accent-dark)
+  set figure(gap: 8pt)
+  set figure.caption(separator: [#h(0.55em)])
+  show figure.caption: set text(font: sans-font, size: 7.8pt, fill: muted)
   show raw: set text(font: mono-font, size: 7.7pt)
 
   // 原稿は一文一行で書くため、行末が約物のときに入る欧文スペースを取り除く。
   // 改行そのもの(#linebreak())は対象にせず、スペースだけを詰める。
   show regex("[。、!?」』)] "): it => it.text.trim()
   // 約物が連続するとき(。「 や 」。など)は、間の空きを半角分に詰める。
-  show regex("[。、」』)] ?[「『(。、]"): it => {
+  // box で包むと改行判定から約物が隠れ、行頭に句読点が落ちるため、
+  // 行末・行頭で消える weak な負スペースで詰める。
+  // 半角括弧は約物詰めの対象にしない。全角約物と違って字面に余白がなく、
+  // 負スペースを入れると隣の句読点や括弧と重なって消える()。 や 」( で顕在化)。
+  // 末尾の「 ?」は、この規則が句読点を消費すると前段の空白除去規則が
+  // 届かなくなるため、原稿改行由来の後続スペースをここで一緒に取り除く。
+  show regex("[。、」』] ?[「『。、] ?"): it => {
     let chars = it.text.replace(" ", "").clusters()
-    box[#chars.at(0)#h(-0.5em)#chars.at(1)]
+    [#chars.at(0)#h(-0.5em, weak: true)#chars.at(1)]
   }
 
   show link: set text(fill: accent-dark)
@@ -148,6 +166,7 @@
       below: 20pt,
       breakable: false,
     )[
+      #set par(justify: false, first-line-indent: 0em)
       #context {
         let eyebrow = heading-label(it)
         if eyebrow != none {
@@ -163,7 +182,7 @@
       #v(10pt)
       #text(font: sans-font, size: 21pt, weight: 700, fill: ink)[#it.body]
       #v(9pt)
-      #line(length: 30mm, stroke: 1.8pt + accent)
+      #line(length: 24mm, stroke: 1.5pt + accent)
     ]
   }
 
@@ -212,7 +231,7 @@
   block(below: 18pt, breakable: false)[
     #text(font: sans-font, size: 21pt, weight: 700, fill: ink)[目次]
     #v(9pt)
-    #line(length: 30mm, stroke: 1.8pt + accent)
+    #line(length: 24mm, stroke: 1.5pt + accent)
   ]
   set text(font: sans-font)
   set par(justify: false, leading: 0.5em, spacing: 0.5em, first-line-indent: 0em)
@@ -266,51 +285,51 @@
   title-note: none,
   subtitle: "",
   author: "",
-  edition: "",
 ) = page(margin: 0mm, fill: paper, header: none, footer: none)[
   #set text(font: sans-font, fill: ink)
 
-  // タイトル
-  #place(top + left, dx: 18mm, dy: 47mm,
-    line(length: 12mm, stroke: 2.4pt + accent))
+  // ひとこと(タイトルの上の帯。地の深緑と文字のクリームはロゴの配色)
+  #if title-note != none {
+    place(top + left, dx: 18mm, dy: 28mm,
+      box(fill: accent, inset: (x: 3mm, y: 1.9mm), radius: 0.7mm,
+        text(size: 9.3pt, weight: 600, fill: cream, tracking: 0.09em)[#title-note]))
+  }
+
+  // タイトル(上の目印は、アプリのアイコンと同じ2枚葉)
+  #place(top + left, dx: 18mm, dy: 41mm,
+    image("assets/logo-leaves.svg", height: 9.5mm))
   #place(top + left, dx: 18mm, dy: 53mm, {
-    set par(leading: 0.42em)
-    text(size: 31pt, weight: 800)[#title]
+    set par(leading: 0.48em)
+    text(size: 30pt, weight: 700)[#title]
   })
 
   // サブタイトル
   #place(top + left, dx: 18mm, dy: 86mm, {
-    set par(leading: 0.8em)
-    text(size: 9.3pt, weight: 500, fill: rgb("#3d4852"))[#subtitle]
+    set par(leading: 0.85em)
+    text(size: 10pt, weight: 600, fill: ink, tracking: 0.02em)[#subtitle]
   })
 
-  // ひとこと(帯の代わりのラベル)
-  #if title-note != none {
-    place(top + left, dx: 18mm, dy: 100.5mm,
-      box(fill: warm, inset: (x: 3.2mm, y: 2mm), radius: 0.8mm,
-        text(size: 10pt, weight: 700, fill: paper, tracking: 0.08em)[#title-note]))
-  }
-
-  // 地の書誌情報
-  #place(top + left, dx: 18mm, dy: 172mm, scale(66%, reflow: true, leaf-mark))
-  #place(top + left, dx: 18mm, dy: 185mm,
-    text(size: 9.5pt, weight: 600)[#author])
-  #place(top + left, dx: 18mm, dy: 191.5mm,
-    text(size: 7pt, weight: 400, fill: muted)[#edition])
+  // 地の書誌情報(枠なしの透過マークと著者名の横組み。発行日は奥付だけに書く)
+  #place(bottom + left, dx: 18mm, dy: -20mm,
+    grid(
+      columns: (auto, auto),
+      column-gutter: 4mm,
+      align: horizon,
+      logo-mark(13mm),
+      text(size: 9.5pt, weight: 600)[#author],
+    ))
 ]
 
-#let title-page(title: "", subtitle: "", author: "", date: "") = {
+#let title-page(title: "", subtitle: "", author: "") = {
   page(header: none, footer: none)[
     #align(center + horizon)[
-      #scale(66%, reflow: true, leaf-mark)
+      #logo-mark(15mm)
       #v(10pt)
       #text(font: body-font, size: 20pt, weight: 600, fill: ink)[#title]
       #v(13pt)
       #text(font: sans-font, size: 9.5pt, fill: accent-dark)[#subtitle]
       #v(30pt)
       #text(font: sans-font, size: 9pt, fill: ink)[#author]
-      #v(4pt)
-      #text(font: sans-font, size: 7.8pt, fill: muted)[#date]
     ]
   ]
 }
@@ -348,13 +367,15 @@
   subtitle: "",
   author: "",
   edition: "",
+  printer: none,
   url: "",
+  x-account: none,
 ) = {
   page(header: none, footer: none)[
     #align(bottom)[
       #set text(font: sans-font)
       #set par(first-line-indent: 0em, justify: false, leading: 0.6em)
-      #leaf-mark
+      #logo-maskable(10mm)
       #v(6pt)
       #line(length: 100%, stroke: 0.6pt + rule)
       #v(13pt)
@@ -366,18 +387,29 @@
         columns: (58pt, 1fr),
         row-gutter: 7pt,
         ..(
-          ([発行], [#edition]),
-          ([著者], [#author]),
-          ([組版], [Typst 0.15 (ヒラギノ明朝 ProN・ヒラギノ角ゴシック・Menlo)]),
-          ([配布], [#link(url)[#url]]),
-          ([利用条件], [CC BY-NC-SA 4.0 (表示・非営利・継承)]),
+          (
+            ([発行], [#edition]),
+            ([著者], [#author]),
+            ([組版], [Typst 0.15 (ヒラギノ明朝 ProN・ヒラギノ角ゴシック・Menlo)]),
+          )
+          + (if printer == none { () } else { (([印刷所], [#printer]),) })
+          + (
+            ([配布], [#link(url)[#url]]),
+          )
+          + (if x-account == none { () } else {
+            // 𝕏(U+1D54F)はヒラギノに無いため、この一字だけ STIX Two Math で描く
+            (([#text(font: "STIX Two Math")[𝕏]], [#link("https://x.com/" + x-account)[\@#x-account]]),)
+          })
+          + (
+            ([利用条件], [CC BY-NC-SA 4.0 (表示・非営利・継承)]),
+          )
         ).map(((label, value)) => (
           text(size: 7.4pt, weight: 600, fill: muted, tracking: 0.08em)[#label],
           text(size: 8pt, fill: ink)[#value],
         )).flatten()
       )
       #v(16pt)
-      #text(size: 7.2pt, fill: muted)[© 2026 プロジェクトこかげ]
+      #text(size: 7.2pt, fill: muted)[© 2026 Project Kokage]
     ]
   ]
 }
@@ -390,65 +422,57 @@
   #body
 ]
 
+// 囲みは枠線を引かず、淡い塗りだけで区切る(枠+塗り+角丸の三重は画面の部品めく)。
 #let key-point(title: [設計の要点], body) = block(
-  above: 10pt,
-  below: 10pt,
-  inset: 10pt,
+  above: 12pt,
+  below: 12pt,
+  inset: (x: 11pt, y: 10pt),
   fill: pale,
-  stroke: 0.7pt + rule,
-  radius: 4pt,
+  radius: 3pt,
   breakable: true,
 )[
   #set par(first-line-indent: 0em)
-  #text(font: sans-font, size: 8.4pt, weight: 700, fill: accent-dark)[#title]
-  #v(4pt)
+  #text(font: sans-font, size: 8.4pt, weight: 700, fill: accent)[#title]
+  #v(5pt)
   #body
 ]
 
 #let caution(title: [判断を誤りやすい点], body) = block(
-  above: 10pt,
-  below: 10pt,
-  inset: 10pt,
+  above: 12pt,
+  below: 12pt,
+  inset: (x: 11pt, y: 10pt),
   fill: pale-warm,
-  stroke: 0.7pt + rgb("#e6c7b4"),
-  radius: 4pt,
+  radius: 3pt,
   breakable: false,
 )[
   #set par(first-line-indent: 0em)
   #text(font: sans-font, size: 8.4pt, weight: 700, fill: warm)[#title]
-  #v(4pt)
+  #v(5pt)
   #body
 ]
 
 #let case-study(title: [こかげでの確認], body) = block(
-  above: 10pt,
-  below: 10pt,
-  inset: (left: 10pt, right: 10pt, top: 8pt, bottom: 8pt),
-  stroke: (left: 2.5pt + accent),
+  above: 12pt,
+  below: 12pt,
+  inset: (left: 11pt, right: 10pt, top: 8pt, bottom: 8pt),
+  stroke: (left: 2pt + accent),
   breakable: true,
 )[
   #set par(first-line-indent: 0em)
   #text(font: sans-font, size: 8.2pt, weight: 700, fill: accent-dark)[#title]
-  #v(3pt)
+  #v(4pt)
   #set text(size: 8.4pt)
   #body
 ]
 
+// 図表は箱で囲まず、表の三線罫とキャプションだけで見せる。
 #let figure-panel(caption: none, body) = figure(
   placement: auto,
-  block(
-    width: 100%,
-    inset: 9pt,
-    fill: rgb("#f5f7f5"),
-    stroke: 0.6pt + rule,
-    radius: 4pt,
-  )[
+  block(width: 100%)[
     #set par(first-line-indent: 0em)
     #body
   ],
-  caption: if caption == none { none } else {
-    text(font: sans-font, size: 7.8pt, fill: muted)[#caption]
-  },
+  caption: caption,
 )
 
 #let flow-node(body, fill-color: pale) = block(
