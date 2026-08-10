@@ -61,7 +61,7 @@
 #figure-panel(
   kind: image,
   placement: none,
-  caption: [本書の全体図。上の三つは差し替えられる部品で、下の決め事だけがどの構成でも残る],
+  caption: [本書の全体図。上の三つは差し替えられる部品で、下の継ぎ目と決め事は、どの構成でも残る],
 )[
   #grid(
     columns: (1fr, 1fr, 1fr),
