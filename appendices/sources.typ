@@ -14,7 +14,7 @@
 - #source-link([Qwen3.5-4B モデルカード], "https://huggingface.co/Qwen/Qwen3.5-4B"):カタログ既定の言語モデル本体。2B・9B も同じ配布元の系列で公開されている。
 - #source-link([llama.cpp 公式リポジトリ], "https://github.com/ggml-org/llama.cpp"):モデルファイル形式、量子化、CPU と GPU による推論。
 - #source-link([fllamer], "https://github.com/ProjectKokage/fllamer"):llama.cpp を同梱する、こかげの Flutter 向け推論ラッパー。アプリ本体と別に公開している。
-- #source-link([Gemma 公式ページ], "https://deepmind.google/models/gemma"):第1章と第2章で比較対象にした、オープンモデルの系列。
+- #source-link([Gemma 公式ページ], "https://deepmind.google/models/gemma"):第 1 章と第 2 章で比較対象にした、オープンモデルの系列。
 - #source-link([Unsloth 公式ドキュメント], "https://unsloth.ai/docs"):言語モデルのファインチューニング(LoRA)と、llama.cpp 用 GGUF への書き出し。言語モデル型の音声合成の学習も扱う。
 - #source-link([sherpa-onnx 公式資料], "https://k2-fsa.github.io/sherpa/onnx/"):端末内の音声区間検出、音声認識、話者分離。
 - #source-link([Silero VAD], "https://github.com/snakers4/silero-vad"):音声区間検出モデル。
@@ -23,11 +23,11 @@
 - #source-link([Open JTalk 辞書 1.11 の配布リリース], "https://github.com/r9y9/open_jtalk/releases/tag/v1.11.1"):こかげがハッシュを固定して取得する、読みの解析用の辞書(展開後 107 MB)。
 - #source-link([Kokoro 82M タイムスタンプ対応 ONNX], "https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX-timestamped/tree/dd4401a9add81ac692d20e240d22ec9dda82cc29"):こかげが版を固定した、波形とトークン時刻を返す音声合成モデル。
 - #source-link([Irodori-TTS 公式リポジトリ], "https://github.com/Aratako/Irodori-TTS"):日本語の反復生成型音声合成。学習(全体・LoRA・話者埋め込み)と推論の公式実装。
-- #source-link([Irodori-TTS-v4-Small], "https://huggingface.co/Aratako/Irodori-TTS-v4-Small"):第2章で検討した候補の重みとモデルカード。評価の数値と既知の制限が記載されている。
+- #source-link([Irodori-TTS-v4-Small], "https://huggingface.co/Aratako/Irodori-TTS-v4-Small"):第 2 章で検討した候補の重みとモデルカード。評価の数値と既知の制限が記載されている。
 - #source-link([Qwen3-TTS 公式リポジトリ], "https://github.com/QwenLM/Qwen3-TTS"):0.6B と 1.7B の多言語音声合成の系列。逐次生成、3 秒からの声の複製、指示による声の設計。Apache-2.0。
 - #source-link([k2-fsa/OmniVoice 公式リポジトリ], "https://github.com/k2-fsa/OmniVoice"):600 を超える言語の音声合成。話者属性の指定と非言語音の記法。Apache-2.0。
-- #source-link([LFM2.5-Audio-1.5B-JP], "https://huggingface.co/LiquidAI/LFM2.5-Audio-1.5B-JP"):第2章で比較した日本語対応の音声ネイティブモデル。LFM Open License v1.0。
-- #source-link([LFM2.5-1.2B-JP], "https://huggingface.co/LiquidAI/LFM2.5-1.2B-JP"):第2章の小節で言語別の頭として挙げた、日本語最適化のテキストモデル。
+- #source-link([LFM2.5-Audio-1.5B-JP], "https://huggingface.co/LiquidAI/LFM2.5-Audio-1.5B-JP"):第 2 章で比較した日本語対応の音声ネイティブモデル。LFM Open License v1.0。
+- #source-link([LFM2.5-1.2B-JP], "https://huggingface.co/LiquidAI/LFM2.5-1.2B-JP"):第 2 章の小節で言語別の頭として挙げた、日本語最適化のテキストモデル。
 - #source-link([LFM2.5-1.2B-Instruct], "https://huggingface.co/LiquidAI/LFM2.5-1.2B-Instruct"):同じ系列の汎用基本版。GGUF を配布し、4 ビット級量子化の重みは 1 GB を切る。
 - #source-link([Qwen3-Omni], "https://github.com/QwenLM/Qwen3-Omni"):音声・画像の理解と発話の逐次生成を一体で持つ大型のオープンモデル。
 - #source-link([granite-embedding-97m-multilingual-r2], "https://huggingface.co/ibm-granite/granite-embedding-97m-multilingual-r2"):検索と記憶が共有する多言語埋め込みモデル。
