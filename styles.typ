@@ -466,8 +466,11 @@
 ]
 
 // 図表は箱で囲まず、表の三線罫とキャプションだけで見せる。
-#let figure-panel(caption: none, body) = figure(
-  placement: auto,
+// kind は表なら自動判定に任せ、図解(表を含まない body)だけ image を明示する。
+// placement: none は本文の流れに固定する(浮動だと breakable な囲みの途中に割り込む)。
+#let figure-panel(caption: none, kind: auto, placement: auto, body) = figure(
+  placement: placement,
+  kind: kind,
   block(width: 100%)[
     #set par(first-line-indent: 0em)
     #body
