@@ -3,3 +3,7 @@
 /output/pdf/*.pdf
 AGENTS.md
 CLAUDE.md
+
+
+# APM dependencies
+apm_modules/
