@@ -1,11 +1,13 @@
+// Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4
+// Hallmark · editorial · 静謐で硬質 · 深緑 · Long Document / 一段組
 // 配色はアプリのロゴから取る(深緑 #2d4d42・ミント #a8d2c2・クリーム #fdf2e1)。
 #let ink = rgb("#222b26")
-#let muted = rgb("#67746d")
+#let muted = rgb("#58655e")
 #let accent = rgb("#2d4d42")
 #let accent-dark = rgb("#1d382f")
 #let mint = rgb("#a8d2c2")
 #let cream = rgb("#fdf2e1")
-#let warm = rgb("#a05e3b")
+#let warm = rgb("#9c5936")
 #let paper = rgb("#fcfbf7")
 #let pale = rgb("#eef4f0")
 #let pale-warm = rgb("#f9efe0")
@@ -16,6 +18,13 @@
 #let sans-font = "Hiragino Sans"
 
 #let mono-font = "Menlo"
+
+#let symbol-font = "STIX Two Math"
+
+// JIS B5 の一段組。本文はおよそ 38〜40 字で折り返す。
+#let bleed = 3mm
+#let body-size = 10pt
+#let body-leading = 0.72em
 
 // アプリのロゴ。assets/ の3種は、こかげ本体が配布しているアイコンと同じ作画。
 // 透過マーク(枠なし)は表紙の地と扉、マスカブル(暗地に原寸マーク)は奥付に使う。
@@ -40,19 +49,21 @@
   }
 }
 
-#let book(title: "", body) = {
+#let book(title: "", page-fill: paper, body) = {
   set document(title: title)
   set page(
-    paper: "a5",
-    fill: paper,
+    paper: "jis-b5",
+    bleed: bleed,
+    binding: left,
+    fill: page-fill,
     margin: (
-      top: 18mm,
-      bottom: 19mm,
-      inside: 20mm,
-      outside: 16mm,
+      top: 22mm,
+      bottom: 23mm,
+      inside: 25mm,
+      outside: 20mm,
     ),
-    header-ascent: 7mm,
-    footer-descent: 8mm,
+    header-ascent: 8.5mm,
+    footer-descent: 9.5mm,
     header: context {
       let page-number = counter(page).get().first()
       let is-blank = query(metadata.where(value: "blank-page")).any(event =>
@@ -71,7 +82,7 @@
           let current-chapter = current-chapter-events.last()
           let chapter-start-page = counter(page).at(current-chapter.location()).first()
           if current-chapter.func() == heading and chapter-start-page < page-number {
-            set text(font: sans-font, size: 6.7pt, fill: muted, tracking: 0.04em)
+            set text(font: sans-font, size: 7.3pt, fill: muted, tracking: 0.04em)
             if calc.even(page-number) {
               align(left)[#title]
             } else {
@@ -91,8 +102,12 @@
         counter(page).at(event.location()).first() == page-number
       )
       if page-number > 2 and not is-blank {
-        set text(font: sans-font, size: 7pt, fill: muted)
-        align(center)[#counter(page).display("1")]
+        set text(font: sans-font, size: 7.6pt, fill: muted)
+        if calc.even(page-number) {
+          align(left)[#counter(page).display("1")]
+        } else {
+          align(right)[#counter(page).display("1")]
+        }
       }
     },
     numbering: "1",
@@ -100,27 +115,27 @@
 
   set text(
     font: body-font,
-    size: 9.2pt,
+    size: body-size,
     fill: ink,
     lang: "ja",
     region: "JP",
   )
   set par(
     justify: true,
-    leading: 0.78em,
-    spacing: 0.78em,
+    leading: body-leading,
+    spacing: 0.48em,
     first-line-indent: (amount: 1em, all: true),
   )
   set heading(numbering: "1.1")
-  // 項目間の空きは本文の行送り(0.78em)と同じにする。これより狭いと、
+  // 項目間の空きは本文の行送りと同じにする。これより狭いと、
   // 折り返しを含む項目では、項目の内側より境目のほうが詰まって見える。
   set list(
     indent: 1.1em,
     body-indent: 0.55em,
-    spacing: 0.78em,
+    spacing: body-leading,
     marker: (text(fill: accent)[•], text(fill: muted, size: 0.85em)[◦]),
   )
-  set enum(indent: 1.1em, body-indent: 0.55em, spacing: 0.78em)
+  set enum(indent: 1.1em, body-indent: 0.55em, spacing: body-leading)
   // 表は縦罫を引かない三線表。見出し行の罫は行本体に持たせ、
   // ページ跨ぎで table.header が繰り返されても罫が付いて回るようにする。
   set table(
@@ -132,13 +147,13 @@
         else { 0.3pt + rule.lighten(20%) },
       bottom: if y == 0 { 0.45pt + rule.darken(45%) } else { none },
     ),
-    inset: (x: 6pt, y: 4.5pt),
+    inset: (x: 6.5pt, y: 5pt),
   )
-  show table.cell.where(y: 0): set text(font: sans-font, size: 7.9pt, weight: 600, fill: accent-dark)
+  show table.cell.where(y: 0): set text(font: sans-font, size: 8.6pt, weight: 600, fill: accent-dark)
   set figure(gap: 8pt)
   set figure.caption(separator: [#h(0.55em)])
-  show figure.caption: set text(font: sans-font, size: 7.8pt, fill: muted)
-  show raw: set text(font: mono-font, size: 7.7pt)
+  show figure.caption: set text(font: sans-font, size: 8.4pt, fill: muted)
+  show raw: set text(font: mono-font, size: 8.3pt)
 
   // 原稿は一文一行で書くため、行末が約物のときに入る欧文スペースを取り除く。
   // 改行そのもの(#linebreak())は対象にせず、スペースだけを詰める。
@@ -163,8 +178,9 @@
     pagebreak(weak: true)
     block(
       above: 0pt,
-      below: 20pt,
+      below: 24pt,
       breakable: false,
+      sticky: true,
     )[
       #set par(justify: false, first-line-indent: 0em)
       #context {
@@ -174,48 +190,50 @@
             columns: (auto, 1fr),
             column-gutter: 10pt,
             align: horizon,
-            text(font: sans-font, size: 8pt, weight: 600, fill: accent, tracking: 0.16em)[#eyebrow],
+            text(font: sans-font, size: 8.4pt, weight: 600, fill: accent, tracking: 0.16em)[#eyebrow],
             line(length: 100%, stroke: 0.5pt + rule),
           )
         }
       }
+      #v(12pt)
+      #text(font: sans-font, size: 23.5pt, weight: 700, fill: ink, tracking: -0.01em)[#it.body]
       #v(10pt)
-      #text(font: sans-font, size: 21pt, weight: 700, fill: ink)[#it.body]
-      #v(9pt)
-      #line(length: 24mm, stroke: 1.5pt + accent)
+      #line(length: 24mm, stroke: 1.3pt + accent)
     ]
   }
 
   show heading.where(level: 2): it => {
     block(
-      above: 16pt,
-      below: 7pt,
+      above: 18pt,
+      below: 8pt,
       breakable: false,
+      sticky: true,
     )[
       #set par(justify: false, first-line-indent: 0em)
       #if it.numbering != none {
-        context text(font: sans-font, size: 9pt, weight: 700, fill: accent)[#counter(heading).display(it.numbering)]
-        h(8pt)
+        context text(font: sans-font, size: 9.3pt, weight: 700, fill: accent)[#counter(heading).display(it.numbering)]
+        h(9pt)
       }
-      #text(font: sans-font, size: 13pt, weight: 700, fill: ink)[#it.body]
+      #text(font: sans-font, size: 14pt, weight: 700, fill: ink)[#it.body]
     ]
   }
 
   show heading.where(level: 3): it => {
     block(
-      above: 11pt,
-      below: 4pt,
+      above: 12pt,
+      below: 5pt,
       breakable: false,
+      sticky: true,
     )[
-      #text(font: sans-font, size: 10.3pt, weight: 700, fill: accent-dark)[#it.body]
+      #text(font: sans-font, size: 10.8pt, weight: 700, fill: accent-dark)[#it.body]
     ]
   }
 
   show quote: it => block(
-    inset: (left: 10pt, right: 8pt, top: 7pt, bottom: 7pt),
-    stroke: (left: 2pt + accent),
+    inset: (left: 11pt, right: 9pt, top: 8pt, bottom: 8pt),
+    stroke: (left: 0.8pt + accent),
     fill: pale,
-    radius: (right: 3pt),
+    radius: (right: 0.8pt),
   )[
     #set par(first-line-indent: 0em)
     #it.body
@@ -228,10 +246,10 @@
 #let toc() = {
   pagebreak(weak: true)
   metadata("chapter-header-reset")
-  block(below: 18pt, breakable: false)[
-    #text(font: sans-font, size: 21pt, weight: 700, fill: ink)[目次]
-    #v(9pt)
-    #line(length: 24mm, stroke: 1.5pt + accent)
+  block(below: 22pt, breakable: false)[
+    #text(font: sans-font, size: 23.5pt, weight: 700, fill: ink)[目次]
+    #v(10pt)
+    #line(length: 24mm, stroke: 1.3pt + accent)
   ]
   set text(font: sans-font)
   set par(justify: false, leading: 0.5em, spacing: 0.5em, first-line-indent: 0em)
@@ -255,23 +273,23 @@
         }
       } else if ev.level == 1 {
         let page-no = counter(page).at(ev.location()).first()
-        block(above: 6pt, below: 4pt)[
+        block(above: 8.5pt, below: 5.5pt)[
           #link(ev.location())[
-            #box(width: 27pt, text(size: 7.3pt, weight: 600, fill: accent)[#heading-label(ev)])
-            #text(size: 9.4pt, weight: 600, fill: ink)[#ev.body]
+            #box(width: 29pt, text(size: 7.7pt, weight: 600, fill: accent)[#heading-label(ev)])
+            #text(size: 9.9pt, weight: 600, fill: ink)[#ev.body]
             #box(width: 1fr)
-            #text(size: 8.4pt, weight: 600, fill: ink)[#page-no]
+            #text(size: 8.7pt, weight: 600, fill: ink)[#page-no]
           ]
         ]
       } else if ev.level == 2 {
         let page-no = counter(page).at(ev.location()).first()
-        block(above: 2.6pt, below: 2.6pt)[
+        block(above: 3.8pt, below: 3.8pt)[
           #link(ev.location())[
-            #h(27pt)
-            #box(width: 22pt, text(size: 7.6pt, fill: muted)[#numbering(ev.numbering, ..counter(heading).at(ev.location()))])
-            #text(size: 8.6pt, fill: ink)[#ev.body]
+            #h(29pt)
+            #box(width: 24pt, text(size: 7.9pt, fill: muted)[#numbering(ev.numbering, ..counter(heading).at(ev.location()))])
+            #text(size: 8.9pt, fill: ink)[#ev.body]
             #box(width: 1fr, align(right, box(inset: (x: 4pt), text(size: 7.6pt, fill: rule.darken(15%))[#repeat([.], gap: 3.2pt)])))
-            #text(size: 8pt, fill: muted)[#page-no]
+            #text(size: 8.3pt, fill: muted)[#page-no]
           ]
         ]
       }
@@ -279,57 +297,108 @@
   }
 }
 
-// 表紙。図版を置かず、文字組と余白だけで構成する。
+// 表紙。地を深緑の面にし、文字組と余白だけで構成する。地色はロゴの深緑で、
+// アプリの標準アイコン(暗地にマーク)と同じ構図になる。
+#let cover-art(
+  title: "",
+  title-note: none,
+  subtitle: "",
+  author: "",
+  x-offset: 0mm,
+) = [
+  #set text(font: sans-font, fill: cream)
+
+  // ひとこと(タイトルの上の帯。深緑の地に対してクリーム地へ反転させる)
+  #if title-note != none {
+    place(top + left, dx: x-offset + 24mm, dy: 50mm,
+      box(fill: cream, inset: (x: 4.2mm, y: 2.6mm), radius: 0.15mm,
+        text(size: 12pt, weight: 600, fill: accent-dark, tracking: 0.09em)[#title-note]))
+  }
+
+  // タイトル(上の目印は、アプリのアイコンと同じ2枚葉)
+  #place(top + left, dx: x-offset + 24mm, dy: 62.5mm,
+    image("assets/logo-leaves.svg", height: 9.5mm))
+  #place(top + left, dx: x-offset + 24mm, dy: 76mm, {
+    set par(leading: 0.52em)
+    text(size: 36pt, weight: 700, tracking: -0.02em)[#title]
+  })
+
+  // サブタイトル(ミントはロゴの葉の色)
+  #place(top + left, dx: x-offset + 24mm, dy: 116mm, {
+    set par(leading: 0.85em)
+    text(size: 11.4pt, weight: 500, fill: mint, tracking: 0.03em)[#subtitle]
+  })
+
+  // 地の書誌情報(枠なしの透過マークと著者名の横組み。発行日は奥付だけに書く。
+  // マークの深緑の影は地に溶け、ミントの本体だけが浮かぶ)
+  #place(bottom + left, dx: x-offset + 24mm, dy: -24mm,
+    grid(
+      columns: (auto, auto),
+      column-gutter: 4.5mm,
+      align: horizon,
+      logo-mark(15mm),
+      text(size: 10.5pt, weight: 600, tracking: 0.02em)[#author],
+    ))
+]
+
 #let cover(
   title: "",
   title-note: none,
   subtitle: "",
   author: "",
-) = page(margin: 0mm, fill: paper, header: none, footer: none)[
-  #set text(font: sans-font, fill: ink)
-
-  // ひとこと(タイトルの上の帯。地の深緑と文字のクリームはロゴの配色)
-  #if title-note != none {
-    place(top + left, dx: 18mm, dy: 28mm,
-      box(fill: accent, inset: (x: 3mm, y: 1.9mm), radius: 0.7mm,
-        text(size: 9.3pt, weight: 600, fill: cream, tracking: 0.09em)[#title-note]))
-  }
-
-  // タイトル(上の目印は、アプリのアイコンと同じ2枚葉)
-  #place(top + left, dx: 18mm, dy: 41mm,
-    image("assets/logo-leaves.svg", height: 9.5mm))
-  #place(top + left, dx: 18mm, dy: 53mm, {
-    set par(leading: 0.48em)
-    text(size: 30pt, weight: 700)[#title]
-  })
-
-  // サブタイトル
-  #place(top + left, dx: 18mm, dy: 86mm, {
-    set par(leading: 0.85em)
-    text(size: 10pt, weight: 600, fill: ink, tracking: 0.02em)[#subtitle]
-  })
-
-  // 地の書誌情報(枠なしの透過マークと著者名の横組み。発行日は奥付だけに書く)
-  #place(bottom + left, dx: 18mm, dy: -20mm,
-    grid(
-      columns: (auto, auto),
-      column-gutter: 4mm,
-      align: horizon,
-      logo-mark(13mm),
-      text(size: 9.5pt, weight: 600)[#author],
-    ))
+) = page(margin: 0mm, fill: accent, header: none, footer: none)[
+  #cover-art(
+    title: title,
+    title-note: title-note,
+    subtitle: subtitle,
+    author: author,
+  )
 ]
+
+// 左綴じの見開き表紙。左から表4、背、表1の順で置く。
+// 背と表4には文字を置かず、表1と同じ深緑を外周の塗り足しまで続ける。
+#let cover-spread(
+  title: "",
+  title-note: none,
+  subtitle: "",
+  author: "",
+  spine: 0mm,
+) = page(
+  width: 364mm + spine,
+  height: 257mm,
+  bleed: bleed,
+  margin: 0mm,
+  fill: accent,
+  header: none,
+  footer: none,
+)[
+  #cover-art(
+    title: title,
+    title-note: title-note,
+    subtitle: subtitle,
+    author: author,
+    x-offset: 182mm + spine,
+  )
+]
+
+// 印刷用本文の2ページ目。表紙を本文へ混ぜず、序章以降の左右配置と
+// ノンブルを通常版から動かさないための白紙ページ。
+#let print-blank-page() = page(
+  fill: white,
+  header: none,
+  footer: none,
+)[#metadata("blank-page")]
 
 #let title-page(title: "", subtitle: "", author: "") = {
   page(header: none, footer: none)[
     #align(center + horizon)[
       #logo-mark(15mm)
-      #v(10pt)
-      #text(font: body-font, size: 20pt, weight: 600, fill: ink)[#title]
-      #v(13pt)
-      #text(font: sans-font, size: 9.5pt, fill: accent-dark)[#subtitle]
-      #v(30pt)
-      #text(font: sans-font, size: 9pt, fill: ink)[#author]
+      #v(12pt)
+      #text(font: body-font, size: 22pt, weight: 600, fill: ink)[#title]
+      #v(15pt)
+      #text(font: sans-font, size: 10pt, fill: accent-dark)[#subtitle]
+      #v(34pt)
+      #text(font: sans-font, size: 9.5pt, fill: ink, tracking: 0.02em)[#author]
     ]
   ]
 }
@@ -369,7 +438,10 @@
   edition: "",
   printer: none,
   url: "",
+  continuous-url: none,
+  versioned-url: none,
   x-account: none,
+  contact: none,
 ) = {
   page(header: none, footer: none)[
     #align(bottom)[
@@ -379,9 +451,15 @@
       #v(6pt)
       #line(length: 100%, stroke: 0.6pt + rule)
       #v(13pt)
-      #text(size: 11pt, weight: 700, fill: ink)[#title]
+      #text(size: 11.8pt, weight: 700, fill: ink)[#title]
       #v(4pt)
-      #text(size: 7.6pt, fill: muted)[#subtitle]
+      #text(size: 8.1pt, fill: muted)[#subtitle]
+      #v(10pt)
+      #block[
+        #set text(size: 8.1pt, fill: ink)
+        筆者らは本書を随時更新する。
+        原稿と組版用コードを GitHub で公開し、CI で組版した最新版と、バージョン番号を付けた最新リリース版を配布する。
+      ]
       #v(14pt)
       #grid(
         columns: (58pt, 1fr),
@@ -396,20 +474,29 @@
           + (
             ([配布], [#link(url)[#url]]),
           )
+          + (if continuous-url == none { () } else {
+            (([最新版], [#link(continuous-url)[PDF をダウンロード]]),)
+          })
+          + (if versioned-url == none { () } else {
+            (([リリース版], [#link(versioned-url)[最新のバージョン付き PDF をダウンロード]]),)
+          })
           + (if x-account == none { () } else {
             // 𝕏(U+1D54F)はヒラギノに無いため、この一字だけ STIX Two Math で描く
-            (([#text(font: "STIX Two Math")[𝕏]], [#link("https://x.com/" + x-account)[\@#x-account]]),)
+            (([#text(font: symbol-font)[𝕏]], [#link("https://x.com/" + x-account)[\@#x-account]]),)
+          })
+          + (if contact == none { () } else {
+            (([連絡先], [#link("mailto:" + contact)[#contact]]),)
           })
           + (
             ([利用条件], [CC BY-NC-SA 4.0 (表示・非営利・継承)]),
           )
         ).map(((label, value)) => (
-          text(size: 7.4pt, weight: 600, fill: muted, tracking: 0.08em)[#label],
-          text(size: 8pt, fill: ink)[#value],
+          text(size: 7.8pt, weight: 600, fill: muted, tracking: 0.08em)[#label],
+          text(size: 8.5pt, fill: ink)[#value],
         )).flatten()
       )
       #v(16pt)
-      #text(size: 7.2pt, fill: muted)[© 2026 Project Kokage]
+      #text(size: 7.6pt, fill: muted)[© 2026 Project Kokage]
     ]
   ]
 }
@@ -417,7 +504,7 @@
 #let chapter-lead(body) = block(
   below: 14pt,
 )[
-  #set text(size: 10.2pt, fill: accent-dark)
+  #set text(size: 10.8pt, fill: accent-dark)
   #set par(first-line-indent: 0em, leading: 0.82em)
   #body
 ]
@@ -428,8 +515,8 @@
   below: 12pt,
   inset: (x: 11pt, y: 10pt),
   fill: pale,
-  radius: 3pt,
-  breakable: true,
+  radius: 1.2pt,
+  breakable: false,
 )[
   #set par(first-line-indent: 0em)
   #text(font: sans-font, size: 8.4pt, weight: 700, fill: accent)[#title]
@@ -442,7 +529,7 @@
   below: 12pt,
   inset: (x: 11pt, y: 10pt),
   fill: pale-warm,
-  radius: 3pt,
+  radius: 1.2pt,
   breakable: false,
 )[
   #set par(first-line-indent: 0em)
@@ -455,13 +542,13 @@
   above: 12pt,
   below: 12pt,
   inset: (left: 11pt, right: 10pt, top: 8pt, bottom: 8pt),
-  stroke: (left: 2pt + accent),
-  breakable: true,
+  stroke: (left: 1pt + accent),
+  breakable: false,
 )[
   #set par(first-line-indent: 0em)
-  #text(font: sans-font, size: 8.2pt, weight: 700, fill: accent-dark)[#title]
+  #text(font: sans-font, size: 8.5pt, weight: 700, fill: accent-dark)[#title]
   #v(4pt)
-  #set text(size: 8.4pt)
+  #set text(size: 9pt)
   #body
 ]
 
@@ -482,11 +569,11 @@
   width: 100%,
   inset: (x: 6pt, y: 5pt),
   fill: fill-color,
-  stroke: 0.6pt + rule,
-  radius: 3pt,
+  stroke: 0.5pt + rule,
+  radius: 1pt,
 )[
   #align(center)[
-    #set text(font: sans-font, size: 8pt)
+    #set text(font: sans-font, size: 8.4pt)
     #body
   ]
 ]

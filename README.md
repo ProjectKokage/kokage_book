@@ -1,8 +1,8 @@
-# 完全ローカルな話し相手の作り方
+# 完全ローカルな対話型AIキャラクターの作り方
 
 Typst で組版した日本語技術書の原稿です。
 
-こかげの設計資料を下敷きに、モデル選定、端末内推論の高速化、音声、三次元キャラクターの制御を、実装コードへ踏み込みすぎない粒度で整理しています。
+こかげの設計資料を下敷きに、LLM、音声認識、音声合成、3Dアバターをひとつのアプリにつなぐ設計を、実装コードへ踏み込まない粒度で整理しています。
 
 `draft.md` は初期メモとして残しています。
 主要な論点は本編へ取り込み済みです。
@@ -12,8 +12,24 @@ Typst で組版した日本語技術書の原稿です。
 Typst 0.15 以降を想定しています。
 
 ```sh
+mkdir -p output/pdf
 typst compile main.typ output/pdf/kokage_book.pdf
+sh scripts/build-print.sh 2.138
 ```
+
+通常版の PDF は188 × 263 mmです。
+中央の182 × 257 mmを JIS B5 の仕上がり枠とし、四辺に3mmの塗り足しを設けています。
+
+`scripts/build-print.sh` は、栄光への入稿用として次の2ファイルを `output/pdf/eikou/` に生成します。
+
+- `cover.pdf`：左から表4、背、表1を並べたカラー見開き表紙。外周3mmの塗り足しを含む。
+- `001-028.pdf`：表紙を含まない28ページのグレースケール本文。1ページ目は扉、2ページ目は白紙。
+
+引数は背幅のmm値です。
+例の `2.138` は、スターアートボード19.5kg、上質90kg、総32ページの場合の栄光の計算値です。
+注文した用紙または栄光の見開き表紙生成ツールが示す背幅へ置き換えてください。
+入稿用データは PDF タグを無効にしています。
+本文のグレースケール変換には Ghostscript を使います。
 
 日本語本文にはヒラギノ明朝、見出しにはヒラギノ角ゴシックを使います。
 別環境では `styles.typ` の `body-font` と `sans-font` を、導入済みの日本語フォント名へ変更してください。
@@ -54,7 +70,7 @@ https://github.com/ProjectKokage/kokage_book/releases/download/v1.0.1/kokage_boo
 
 ## ライセンス
 
-© 2026 プロジェクトこかげ
+© 2026 Project Kokage
 
 本リポジトリの内容は、[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/) のもとで公開します。
 完全な条文は [`LICENSE.txt`](LICENSE.txt) を参照してください。
@@ -62,9 +78,9 @@ https://github.com/ProjectKokage/kokage_book/releases/download/v1.0.1/kokage_boo
 ## 構成
 
 - `main.typ`：書籍全体の構成と書誌情報
-- `styles.typ`：A5 判の組版、見出し、コラム、図版の定義
-- `chapters/`：序章、全 8 章、終章の本文
-- `appendices/`：設計チェックリスト、用語集、参考資料
+- `styles.typ`：JIS B5 判（仕上がり 182 × 257 mm、四辺の塗り足し 3 mm）の組版、見出し、コラム、図版の定義
+- `chapters/`：序章、全 4 章、終章の本文
+- `appendices/`：設計チェックリスト、用語集、制御記法の語彙、参考資料
 - `output/pdf/`：組版済みの文書
 
-著者名、版表記、発行日は `main.typ` 冒頭で変更できます。
+著者名と発行日は `main.typ` 冒頭で変更できます。
